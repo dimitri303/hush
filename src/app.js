@@ -2332,22 +2332,6 @@ function drawTV(){
   cx.fillStyle='rgba(180,220,255,.30)';
   cx.fillText('TIME',ckx+ckw+2,cky+9);
 
-  // TV stand — low cabinet anchoring the TV to the floor
-  cx.save();
-  const stx=x+w*.18, sty=y+h*.88, stw=w*.64, sth=h*.18;
-  const stg=cx.createLinearGradient(stx,sty,stx,sty+sth);
-  stg.addColorStop(0,'#1a1828');
-  stg.addColorStop(1,'#0d0b14');
-  cx.fillStyle=stg;
-  rr(cx,stx,sty,stw,sth,3,true,false);
-  cx.strokeStyle='rgba(120,100,180,.25)';
-  cx.lineWidth=.6;
-  rr(cx,stx,sty,stw,sth,3,false,true);
-  cx.fillStyle='rgba(20,16,30,.9)';
-  cx.fillRect(stx+stw*.12,sty+sth*.8,stw*.08,sth*.22);
-  cx.fillRect(stx+stw*.80,sty+sth*.8,stw*.08,sth*.22);
-  cx.restore();
-
   // Floor reflection
   cx.save();
   cx.globalAlpha=S.tvOn?.07:.03;
