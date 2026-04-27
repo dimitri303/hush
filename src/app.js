@@ -2150,7 +2150,7 @@ function drawRadio(){
 // Native HUSH TV asset integration.
 // Uses the new transparent cut-out TV asset, with the live canvas TV system
 // composited into the glass rather than placing a rectangular image over the room.
-const HUSH_TV_ASSET_SRC='hush-tv-asset.png';
+const HUSH_TV_ASSET_SRC='assets/hush-tv-asset.png';
 const HUSH_TV_IMG=new Image();
 HUSH_TV_IMG.src=HUSH_TV_ASSET_SRC;
 
