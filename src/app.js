@@ -2340,8 +2340,8 @@ function drawTV(){
   if(HUSH_TV_IMG.complete&&HUSH_TV_IMG.naturalWidth) cx.drawImage(HUSH_TV_IMG,x,y,w,h);
   cx.restore();
 
-  // Floor glow puddle
-  if(S.tvOn){
+// Floor glow puddle
+  {
     cx.save();
     cx.globalAlpha=.09+S.tvBloom*.06;
     const puddle=cx.createRadialGradient(x+w*.52,y+h*.97,0,x+w*.52,y+h*.97,w*.42);
