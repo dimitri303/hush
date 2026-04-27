@@ -326,7 +326,7 @@ const R={
   lamp:  {x:72,y:224},
   radio: {x:144,y:222,w:116,h:42},
   tv:    {x:450,y:220,w:98,h:78},
-  holo:{x:320,y:308,w:36,h:30},
+  holo:{x:320,y:300,w:22,h:18},
   floorY:230,
 };
 
@@ -2497,9 +2497,9 @@ function drawTVScreen(x,y,w,h){
 function drawTable(){
   // Large foreground table — viewer is sitting on a sofa, table is close to camera.
   // Much wider and lower, legs cropped by bottom edge for depth.
-const tw=480, th=220;
+const tw=300, th=140;
 const tx=RW/2-tw/2;
-const ty=RH-th+55; // sits at bottom, legs slightly cropped
+const ty=RH-th+20; // sits at bottom, legs slightly cropped
 
   // Contact shadow on floor
   cx.save();
@@ -2517,28 +2517,26 @@ const ty=RH-th+55; // sits at bottom, legs slightly cropped
 
 function drawHoloCube(){
   const {x,y,w,h}=R.holo;
-  const bob=Math.sin(S.t*1.6)*3;
+  const bob=Math.sin(S.t*1.6)*2;
   const yy=y+bob;
   if(S.holoPulse>0) S.holoPulse=Math.max(0,S.holoPulse-0.025);
-  const sh=cx.createRadialGradient(x,y+20,4,x,y+20,42+S.holoPulse*26);
-  sh.addColorStop(0,`rgba(150,95,255,${.16+S.holoPulse*.18})`);
+
+  // Subtle glow on table surface
+  const sh=cx.createRadialGradient(x,y+8,2,x,y+8,22+S.holoPulse*12);
+  sh.addColorStop(0,`rgba(150,95,255,${.10+S.holoPulse*.12})`);
   sh.addColorStop(1,'transparent');
-  cx.fillStyle=sh; cx.fillRect(x-58,y-8,116,56);
-  const bg=cx.createLinearGradient(x-20,y+10,x+20,y+28);
-  bg.addColorStop(0,'#1b1424'); bg.addColorStop(1,'#0e0a15');
-  cx.fillStyle=bg; rr(cx,x-22,y+8,44,22,7,true,false);
-  cx.fillStyle=`rgba(185,150,255,${.45+S.holoPulse*.25})`;
-  cx.beginPath(); cx.arc(x, y+16, 6, 0, Math.PI*2); cx.fill();
+  cx.fillStyle=sh; cx.fillRect(x-30,y-4,60,24);
+
   cx.save();
-  cx.translate(x, yy-16);
+  cx.translate(x, yy-8);
   cx.globalCompositeOperation='lighter';
   const alpha=.55+Math.sin(S.t*2.2)*.12+S.holoPulse*.25;
   cx.strokeStyle=`rgba(170,145,255,${alpha})`;
   cx.fillStyle=`rgba(200,185,255,${.10+S.holoPulse*.08})`;
-  cx.lineWidth=1.3+S.holoPulse*.7;
+  cx.lineWidth=1.0+S.holoPulse*.5;
   if(S.holoMode===0){
     const rot=S.t*.7;
-    const s2=17+S.holoPulse*5;
+    const s2=9+S.holoPulse*3;
     const pts=[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]].map(([px,py,pz])=>{
       const cr=Math.cos(rot), sr=Math.sin(rot);
       const rx=px*cr-pz*sr, rz=px*sr+pz*cr;
