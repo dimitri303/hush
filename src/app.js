@@ -2157,21 +2157,18 @@ HUSH_TV_IMG.src=HUSH_TV_ASSET_SRC;
 function drawTV(){
   const base=R.tv;
 
-  // Production TV shell pass.
-  // This uses one neutral TV shell asset and lets the code handle screen state,
-  // time-of-day response, glass depth, contact shadow and future video masking.
   const x=base.x-34;
   const y=base.y-18;
   const w=base.w+72;
   const h=base.h+36;
 
-  // Screen bounds measured against the production TV shell.
-  // Keep this as the single source of truth for future video embedding.
-  const sx=x+w*.102;
-  const sy=y+h*.176;
-  const sw=w*.492;
-  const sh=h*.522;
-  const sr=Math.max(6,w*.043);
+  // Screen bounds measured directly from hush-tv-asset.png (2048x1365).
+  // PNG has solid black background (no alpha), so draw order is: shell first, screen content second.
+  const sx=x+w*.226;
+  const sy=y+h*.227;
+  const sw=w*.354;
+  const sh=h*.440;
+  const sr=Math.max(4,w*.030);
 
   const day=S.timeBlend.day||0;
   const sunset=S.timeBlend.sunset||0;
@@ -2210,16 +2207,29 @@ function drawTV(){
   cx.fill();
   cx.restore();
 
-  // Screen content first, so the shell/glass reads as a physical aperture.
+  // 1. Draw TV shell FIRST (PNG has solid black background — must come before screen content)
+  if(HUSH_TV_IMG.complete && HUSH_TV_IMG.naturalWidth){
+    cx.save();
+    cx.globalAlpha=.985;
+    cx.filter=`brightness(${shellBrightness.toFixed(3)}) saturate(${shellSaturation.toFixed(3)}) contrast(${shellContrast.toFixed(3)})`;
+    cx.drawImage(HUSH_TV_IMG,x,y,w,h);
+    cx.restore();
+  } else {
+    const g=cx.createLinearGradient(x,y,x,y+h);
+    g.addColorStop(0,'#171324');
+    g.addColorStop(1,'#07070c');
+    cx.fillStyle=g;
+    rr(cx,x,y,w,h,9,true,false);
+  }
+
+  // 2. Screen content drawn ON TOP of shell, clipped to screen rect
   cx.save();
   cx.beginPath();
   rr(cx,sx,sy,sw,sh,sr,false,false);
   cx.clip();
 
   if(S.tvOn){
-    cx.globalAlpha=.46;
     drawTVScreen(sx,sy,sw,sh);
-    cx.globalAlpha=1;
   }else{
     const off=cx.createLinearGradient(sx,sy,sx,sy+sh);
     off.addColorStop(0,'rgba(4,5,10,.58)');
@@ -2251,22 +2261,8 @@ function drawTV(){
   for(let yy=sy+1; yy<sy+sh; yy+=4) cx.fillRect(sx,yy,sw,1);
   cx.restore();
 
-  // Draw the TV shell over the content.
-  if(HUSH_TV_IMG.complete && HUSH_TV_IMG.naturalWidth){
-    cx.save();
-    cx.globalAlpha=.985;
-    cx.filter=`brightness(${shellBrightness.toFixed(3)}) saturate(${shellSaturation.toFixed(3)}) contrast(${shellContrast.toFixed(3)})`;
-    cx.drawImage(HUSH_TV_IMG,x,y,w,h);
-    cx.restore();
-  } else {
-    const g=cx.createLinearGradient(x,y,x,y+h);
-    g.addColorStop(0,'#171324');
-    g.addColorStop(1,'#07070c');
-    cx.fillStyle=g;
-    rr(cx,x,y,w,h,9,true,false);
-  }
+  // Screen edge highlight and glass lip.
 
-  // Screen edge highlight and glass lip after shell draw.
   cx.save();
   cx.globalAlpha=S.tvOn?.17:.09;
   cx.strokeStyle=night>.5?'rgba(150,220,255,.48)':sunset>.5?'rgba(255,150,210,.40)':'rgba(220,230,255,.30)';
