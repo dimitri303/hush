@@ -637,10 +637,11 @@ function tuneRadioTo(v, immediate=false){
 }
 
 function cycleTVChannel(){
-  S.tvCh=(S.tvCh+1)%3;
+  S.tvCh=(S.tvCh+1)%4;
   S.tvFlicker=.42;
   S.tvBloom=.38;
   document.querySelectorAll('[data-ch]').forEach(n=>n.classList.toggle('on',+n.dataset.ch===S.tvCh));
+  syncAnimeVideo();
 }
 
 function setTVPower(on){
@@ -650,6 +651,7 @@ function setTVPower(on){
   S.tvBloom=.18;
   S.tvHumPulse=.22;
   playMicroClick('hard');
+  syncAnimeVideo();
 }
 
 
@@ -2154,6 +2156,22 @@ const HUSH_TV_ASSET_SRC='assets/hush-tv-asset.png';
 const HUSH_TV_IMG=new Image();
 HUSH_TV_IMG.src=HUSH_TV_ASSET_SRC;
 
+// ── ANIME CHANNEL VIDEO ────────────────────────────────
+const TV_ANIME=document.createElement('video');
+TV_ANIME.src='assets/Bop.mp4';
+TV_ANIME.loop=true;
+TV_ANIME.muted=true;
+TV_ANIME.playsInline=true;
+TV_ANIME.preload='auto';
+
+function syncAnimeVideo(){
+  if(S.tvOn && S.tvCh===3){
+    if(TV_ANIME.paused) TV_ANIME.play().catch(()=>{});
+  } else {
+    if(!TV_ANIME.paused) TV_ANIME.pause();
+  }
+}
+
 function drawTV(){
   const base=R.tv;
 
@@ -2410,13 +2428,27 @@ function drawTVScreen(x,y,w,h){
     // Scan line
     const sc=((S.t*30)%(h+2));
     cx.fillStyle='rgba(255,255,255,.15)'; cx.fillRect(x,y+sc,w,1);
-  } else if(S.tvOn) {
+  } else if(S.tvOn && S.tvCh===2) {
     // Glitch
     cx.fillStyle='#0c0710'; rr(cx,x,y,w,h,4,true,false);
     for(let i=0;i<8;i++){
       const c1=Math.random()*180+60|0;
       cx.fillStyle=`rgba(${c1},${Math.random()*40|0},${120+Math.random()*120|0},.9)`;
       cx.fillRect(x,(y+Math.random()*h)|0,w,1+(Math.random()*3|0));
+    }
+  } else if(S.tvOn && S.tvCh===3){
+    // Anime channel — draws live video frames onto the screen
+    if(TV_ANIME.readyState>=2){
+      cx.drawImage(TV_ANIME,x,y,w,h);
+    } else {
+      // Not loaded yet — show a subtle loading state
+      cx.fillStyle='#08040f';
+      cx.fillRect(x,y,w,h);
+      cx.fillStyle='rgba(200,140,255,.5)';
+      cx.font=`${Math.max(4,h*.11)|0}px monospace`;
+      cx.textAlign='center';
+      cx.fillText('LOADING',x+w*.5,y+h*.54);
+      cx.textAlign='left';
     }
   }
 
