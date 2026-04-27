@@ -2497,9 +2497,9 @@ function drawTVScreen(x,y,w,h){
 function drawTable(){
   // Large foreground table — viewer is sitting on a sofa, table is close to camera.
   // Much wider and lower, legs cropped by bottom edge for depth.
-  const tw=380, th=175;
-  const tx=RW/2-tw/2;
-  const ty=RH-th+20; // sits at bottom, legs slightly cropped
+const tw=480, th=220;
+const tx=RW/2-tw/2;
+const ty=RH-th+55; // sits at bottom, legs slightly cropped
 
   // Contact shadow on floor
   cx.save();
