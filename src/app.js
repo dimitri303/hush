@@ -2222,11 +2222,21 @@ function drawTV(){
     rr(cx,x,y,w,h,9,true,false);
   }
 
-  // 2. Screen content drawn ON TOP of shell, clipped to screen rect
+  // 2. Screen content drawn ON TOP of shell, clipped to a perspective trapezoid.
+  // The TV's 3/4 angle means the right edge recedes — lean approximates this.
   cx.save();
+  const lean=sh*.055;
   cx.beginPath();
-  rr(cx,sx,sy,sw,sh,sr,false,false);
+  cx.moveTo(sx,    sy);
+  cx.lineTo(sx+sw, sy+lean);
+  cx.lineTo(sx+sw, sy+sh+lean);
+  cx.lineTo(sx,    sy+sh);
+  cx.closePath();
   cx.clip();
+
+  // Shear maps rectangular content onto the angled screen, pivoting at top-left.
+  const shearB=lean/sw;
+  cx.transform(1,shearB,0,1,0,-shearB*sx);
 
   if(S.tvOn){
     drawTVScreen(sx,sy,sw,sh);
