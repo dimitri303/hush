@@ -326,7 +326,7 @@ const R={
   lamp:  {x:72,y:224},
   radio: {x:144,y:222,w:116,h:42},
   tv:    {x:450,y:220,w:98,h:78},
-  holo:{x:320,y:300,w:22,h:18},
+  holo:{x:320,y:282,w:22,h:18},
   floorY:230,
 };
 
@@ -2161,6 +2161,10 @@ HUSH_TV_IMG.src=HUSH_TV_ASSET_SRC;
 const TABLE_IMG=new Image();
 TABLE_IMG.src='assets/table.png';
 
+// Holographic projector base asset
+const CUBE_BASE_IMG=new Image();
+CUBE_BASE_IMG.src='assets/cubeBase.png';
+
 // ── ANIME CHANNEL VIDEO ────────────────────────────────
 const TV_ANIME=document.createElement('video');
 TV_ANIME.src='assets/Bop.mp4';
@@ -2520,6 +2524,15 @@ function drawHoloCube(){
   const bob=Math.sin(S.t*1.6)*2;
   const yy=y+bob;
   if(S.holoPulse>0) S.holoPulse=Math.max(0,S.holoPulse-0.025);
+
+  // Projector base asset — sits on table, cube projects from lens
+  // Asset is 1536x1024, device spans x:26.8%-73.2%, y:27.8%-76.9%
+  const pw=68, ph=46;
+  const px=x-pw/2;
+  const py=y+2;
+  if(CUBE_BASE_IMG.complete && CUBE_BASE_IMG.naturalWidth){
+    cx.drawImage(CUBE_BASE_IMG, px, py, pw, ph);
+  }
 
   // Subtle glow on table surface
   const sh=cx.createRadialGradient(x,y+8,2,x,y+8,22+S.holoPulse*12);
