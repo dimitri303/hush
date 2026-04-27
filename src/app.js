@@ -2150,7 +2150,7 @@ function drawRadio(){
 // Native HUSH TV asset integration.
 // Uses the new transparent cut-out TV asset, with the live canvas TV system
 // composited into the glass rather than placing a rectangular image over the room.
-const HUSH_TV_ASSET_SRC='assets/hush-tv-asset.png';
+const HUSH_TV_ASSET_SRC='hush-tv-asset.png';
 const HUSH_TV_IMG=new Image();
 HUSH_TV_IMG.src=HUSH_TV_ASSET_SRC;
 
@@ -2307,6 +2307,45 @@ function drawTV(){
   cx.font='5px monospace';
   cx.fillStyle='rgba(180,220,255,.30)';
   cx.fillText('TIME',ckx+ckw+2,cky+9);
+
+  // TV stand — low cabinet anchoring the TV to the floor
+  cx.save();
+  const stx=x+w*.18, sty=y+h*.88, stw=w*.64, sth=h*.18;
+  const stg=cx.createLinearGradient(stx,sty,stx,sty+sth);
+  stg.addColorStop(0,'#1a1828');
+  stg.addColorStop(1,'#0d0b14');
+  cx.fillStyle=stg;
+  rr(cx,stx,sty,stw,sth,3,true,false);
+  cx.strokeStyle='rgba(120,100,180,.25)';
+  cx.lineWidth=.6;
+  rr(cx,stx,sty,stw,sth,3,false,true);
+  cx.fillStyle='rgba(20,16,30,.9)';
+  cx.fillRect(stx+stw*.12,sty+sth*.8,stw*.08,sth*.22);
+  cx.fillRect(stx+stw*.80,sty+sth*.8,stw*.08,sth*.22);
+  cx.restore();
+
+  // Floor reflection
+  cx.save();
+  cx.globalAlpha=S.tvOn?.07:.03;
+  cx.transform(1,0,0,-1,0,(y+h*.96)*2);
+  cx.filter='blur(2px)';
+  if(HUSH_TV_IMG.complete&&HUSH_TV_IMG.naturalWidth) cx.drawImage(HUSH_TV_IMG,x,y,w,h);
+  cx.restore();
+
+  // Floor glow puddle
+  if(S.tvOn){
+    cx.save();
+    cx.globalAlpha=.09+S.tvBloom*.06;
+    const puddle=cx.createRadialGradient(x+w*.52,y+h*.97,0,x+w*.52,y+h*.97,w*.42);
+    puddle.addColorStop(0,'rgba(100,180,255,.4)');
+    puddle.addColorStop(.5,'rgba(80,120,220,.15)');
+    puddle.addColorStop(1,'transparent');
+    cx.fillStyle=puddle;
+    cx.beginPath();
+    cx.ellipse(x+w*.52,y+h*.97,w*.42,h*.09,0,0,Math.PI*2);
+    cx.fill();
+    cx.restore();
+  }
 
   if(S.focus==='tv'){
     cx.strokeStyle='rgba(130,230,255,.38)';
