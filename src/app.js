@@ -326,7 +326,7 @@ const R={
   lamp:  {x:72,y:224},
   radio: {x:144,y:222,w:116,h:42},
   tv:    {x:450,y:220,w:98,h:78},
-  holo:{x:320,y:306,w:44,h:38},
+  holo:{x:320,y:288,w:36,h:30},
   floorY:230,
 };
 
@@ -904,6 +904,7 @@ function render(ts){
   drawLamp();
   drawRadio();
   drawTV();
+  drawTable();
   drawHoloCube();
   drawDynamicLightPass();
   drawReactiveLightingPass();
@@ -2156,6 +2157,10 @@ const HUSH_TV_ASSET_SRC='assets/hush-tv-asset.png';
 const HUSH_TV_IMG=new Image();
 HUSH_TV_IMG.src=HUSH_TV_ASSET_SRC;
 
+// Coffee table asset
+const TABLE_IMG=new Image();
+TABLE_IMG.src='assets/table.png';
+
 // ── ANIME CHANNEL VIDEO ────────────────────────────────
 const TV_ANIME=document.createElement('video');
 TV_ANIME.src='assets/Bop.mp4';
@@ -2488,6 +2493,27 @@ function drawTVScreen(x,y,w,h){
 }
 
 // ── AQUARIUM ─────────────────────────────────────────
+
+function drawTable(){
+  // Table PNG is 1536x1024, actual table spans x:6.3%-93.4%, y:39%-70%
+  // Draw it centered under the holocube at R.holo.x
+  const tw=160, th=74;
+  const tx=R.holo.x-tw/2;
+  const ty=R.holo.y-8;
+
+  // Contact shadow
+  cx.save();
+  cx.filter='blur(5px)';
+  cx.fillStyle='rgba(0,0,0,.5)';
+  cx.beginPath();
+  cx.ellipse(R.holo.x, ty+th*.88, tw*.44, th*.09, 0, 0, Math.PI*2);
+  cx.fill();
+  cx.restore();
+
+  if(TABLE_IMG.complete && TABLE_IMG.naturalWidth){
+    cx.drawImage(TABLE_IMG, tx, ty, tw, th);
+  }
+}
 
 function drawHoloCube(){
   const {x,y,w,h}=R.holo;
