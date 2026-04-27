@@ -325,7 +325,7 @@ const R={
   win:   WIN,
   lamp:  {x:72,y:224},
   radio: {x:144,y:222,w:116,h:42},
-  tv:    {x:460,y:220,w:98,h:78},
+  tv:    {x:450,y:220,w:98,h:78},
   holo:{x:320,y:306,w:44,h:38},
   floorY:230,
 };
@@ -2197,6 +2197,15 @@ function drawTV(){
   const shellBrightness=(1.06*day)+(1.015*sunset)+(.96*night);
   const shellSaturation=(.82*day)+(1.02*sunset)+(1.08*night);
   const shellContrast=(.96*day)+(1.00*sunset)+(1.03*night);
+
+  // Contact shadow — anchors TV to the ledge
+  cx.save();
+  cx.filter='blur(4px)';
+  cx.fillStyle='rgba(0,0,0,.45)';
+  cx.beginPath();
+  cx.ellipse(x+w*.52,y+h*.98,w*.38,h*.06,0,0,Math.PI*2);
+  cx.fill();
+  cx.restore();
 
   cx.save();
 
